@@ -6,6 +6,7 @@ import AppointmentLookUpResult from "./AppointmentLookUpResult";
 function Appointments() {
   const [lookUpSummary, setLookUpSummary] = useState([]);
   const [reqPayload, setReqPayload] = useState({});
+  const [loading, setLoading] = useState(false);
 
   return (
     <Box display="flex" style={{ height: "calc(100vh - 3rem)" }}>
@@ -13,6 +14,7 @@ function Appointments() {
       <AppointmentLooKUpSearch
         setLookUpSummary={setLookUpSummary}
         setReqPayload={setReqPayload}
+        setLoading={setLoading}
       />
 
       {/* Right Panel */}
@@ -20,6 +22,8 @@ function Appointments() {
         <AppointmentLookUpResult
           lookUpSummary={lookUpSummary}
           reqPayload={reqPayload}
+          loading={loading}
+          setLoading={setLoading}
         />
       </Box>
     </Box>

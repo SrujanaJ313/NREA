@@ -294,7 +294,7 @@ function WorkSearchItems({ data, formik, disableForm }) {
           sx={{ mt: "0px !important" }}
         >
           <Button sx={{ paddingY: 0 }} onClick={handleRows}>
-            {showMore ? "- Add less" : "+ Add more"}
+            {showMore ? "- Show less" : "+ Show more"}
           </Button>
         </Stack>
       </Stack>

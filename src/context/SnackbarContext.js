@@ -12,10 +12,11 @@ export const SnackbarProvider = ({ children }) => {
     open: false,
     message: "",
     duration: 5000,
+    severity: "",
   });
 
-  const showSnackbar = (message, duration = 5000) => {
-    setSnackbar({ open: true, message, duration });
+  const showSnackbar = (message, duration = 5000, severity = "success") => {
+    setSnackbar({ open: true, message, duration, severity });
   };
 
   const handleClose = () => {
@@ -34,7 +35,7 @@ export const SnackbarProvider = ({ children }) => {
       >
         <Alert
           onClose={handleClose}
-          severity="success"
+          severity={snackbar.severity}
           variant="filled"
           sx={{ width: "100%" }}
         >

@@ -911,6 +911,25 @@ const caseLookUpValidationSchema = () => {
     // }),
   });
 };
+const schedulePageValidationSchema = yup.object({
+  caseManagerAvl: yup
+    .string()
+    .required("Case Manager Availability is required"),
+  localOffice: yup
+    .string()
+    .oneOf(["Y", "N"])
+    .required("Look Up Case Manager Availability is required"),
+  mode: yup
+    .object({
+      selectedPrefMtgModeInPerson: yup.boolean(),
+      selectedPrefMtgModeVirtual: yup.boolean(),
+    })
+    .test(
+      "at-least-one-true",
+      "At least one of the Preferred Meeting Modes is required",
+      (value) => Object.values(value || {}).includes(true)
+    ),
+});
 
 export {
   initialAppointmentDetailsSchema,
@@ -924,4 +943,5 @@ export {
   reAssignPageValidationSchema,
   lookUpAppointmentsValidationSchema,
   caseLookUpValidationSchema,
+  schedulePageValidationSchema,
 };

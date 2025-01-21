@@ -7,21 +7,40 @@ export const getMsgsFromErrorCode = (apiPath, errorResponse) => {
     messages = [];
   if (errorResponse?.errorDetails?.length > 0) {
     errorResponse.errorDetails.forEach((ed) => {
-      messageCodes.push(...ed.errorCode);
+      if (ed.errorCode) {
+        ed.errorCode.forEach((ec) => {
+          messageCodes.push({ errCode: ec });
+        });
+      } else if (ed.error) {
+        ed.error.forEach((ec) => {
+          messageCodes.push({
+            errCode: ec.errorCode,
+            errParms: ec.errorParams,
+          });
+        });
+      }
     });
   } else if (errorResponse.reason) {
-    messageCodes.push(errorResponse.reason);
+    messageCodes.push({ errCode: errorResponse.reason });
   } else {
-    messageCodes.push(errorResponse.status);
+    messageCodes.push({ errCode: errorResponse.status });
   }
-  // const urlPath = apiPath.substring(apiPath.indexOf('/')+1)
+
   messageCodes.forEach((code) => {
-    if (ERROR_CODES_MAPPER[apiPath] && ERROR_CODES_MAPPER[apiPath][code]) {
-      messages.push(ERROR_CODES_MAPPER[apiPath][code]);
-    } else if (ERROR_CODES_MAPPER.reasonCodes[code]) {
-      messages.push(ERROR_CODES_MAPPER.reasonCodes[code]);
-    } else if (ERROR_CODES_MAPPER.default[code]) {
-      messages.push(ERROR_CODES_MAPPER.default[code]);
+    if (
+      ERROR_CODES_MAPPER[apiPath] &&
+      ERROR_CODES_MAPPER[apiPath][code.errCode]
+    ) {
+      messages.push(
+        replacePlaceholders(
+          ERROR_CODES_MAPPER[apiPath][code.errCode],
+          code.errParms
+        )
+      );
+    } else if (ERROR_CODES_MAPPER.reasonCodes[code.errCode]) {
+      messages.push(ERROR_CODES_MAPPER.reasonCodes[code.errCode]);
+    } else if (ERROR_CODES_MAPPER.default[code.errCode]) {
+      messages.push(ERROR_CODES_MAPPER.default[code.errCode]);
     } else {
       messages.push(ERROR_CODES_MAPPER.default.default);
     }
@@ -31,12 +50,19 @@ export const getMsgsFromErrorCode = (apiPath, errorResponse) => {
   }
   return messages;
 };
+
+const replacePlaceholders = (str, values = []) => {
+  return str.replace(/{(\d+)}/g, (match, index) => {
+    return typeof values[index] !== "undefined" ? values[index] : match;
+  });
+};
 export const convertISOToMMDDYYYY = (isoString) => {
   const date = new Date(isoString);
   const month = String(date.getMonth() + 1).padStart(2, "0");
   const day = String(date.getDate()).padStart(2, "0");
   const year = date.getFullYear();
   return `${month}/${day}/${year}`;
+  // return moment(isoString).format("MM/DD/YYYY");
 };
 
 export const convertTimeToHoursMinutes = (timestamp) => {

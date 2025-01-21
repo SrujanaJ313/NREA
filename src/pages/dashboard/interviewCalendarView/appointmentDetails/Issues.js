@@ -73,7 +73,6 @@ function Issues({ formik, caseDetails, disableForm, isReEdit }) {
   };
 
   const fetchSubIssuesList = async (issueTypeId) => {
-    console.log("guns2 subTypes ", issueTypeId);
     if (!subIssues[issueTypeId]) {
       try {
         setErrorMessages([]);

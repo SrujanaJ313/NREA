@@ -133,7 +133,10 @@ function ScheduleEvent({ caseDetails, event, onSubmitClose }) {
                   variant="contained"
                   onClick={() => handleReOpenRequest()}
                   size="small"
-                  disabled={caseDetails?.reopenAccess === "N"}
+                  disabled={
+                    caseDetails?.reopenAccess === "N"
+                    //|| caseDetails?.caseStage === "Terminated"
+                  }
                 >
                   Edit Appointment
                 </Button>
@@ -143,7 +146,12 @@ function ScheduleEvent({ caseDetails, event, onSubmitClose }) {
                 onClick={() => setType("reschedule")}
                 size="small"
                 disabled={
-                  !isCaseAccessPresent("rescheduleAccess", event, caseDetails)
+                  !isCaseAccessPresent(
+                    "rescheduleAccess",
+                    event,
+                    caseDetails
+                    // caseDetails?.caseStage
+                  )
                 }
               >
                 Reschedule
@@ -153,7 +161,12 @@ function ScheduleEvent({ caseDetails, event, onSubmitClose }) {
                 onClick={() => setType("switch")}
                 size="small"
                 disabled={
-                  !isCaseAccessPresent("switchModeAccess", event, caseDetails)
+                  !isCaseAccessPresent(
+                    "switchModeAccess",
+                    event,
+                    caseDetails
+                    // caseDetails?.caseStage
+                  )
                 }
               >
                 Switch Mode
@@ -163,7 +176,12 @@ function ScheduleEvent({ caseDetails, event, onSubmitClose }) {
                 onClick={() => setType("returnToWork")}
                 size="small"
                 disabled={
-                  !isCaseAccessPresent("returnToWorkAccess", event, caseDetails)
+                  !isCaseAccessPresent(
+                    "returnToWorkAccess",
+                    event,
+                    caseDetails
+                    // caseDetails?.caseStage
+                  )
                 }
               >
                 Returned to Work
@@ -175,7 +193,12 @@ function ScheduleEvent({ caseDetails, event, onSubmitClose }) {
                 onClick={() => setType("appointmentDetails")}
                 size="small"
                 disabled={
-                  !isCaseAccessPresent("appointmentAccess", event, caseDetails)
+                  !isCaseAccessPresent(
+                    "appointmentAccess",
+                    event,
+                    caseDetails
+                    // caseDetails?.caseStage
+                  )
                 }
               >
                 Appointment Details
@@ -186,7 +209,12 @@ function ScheduleEvent({ caseDetails, event, onSubmitClose }) {
                 onClick={() => setType("noShow")}
                 size="small"
                 disabled={
-                  !isCaseAccessPresent("noShowAccess", event, caseDetails)
+                  !isCaseAccessPresent(
+                    "noShowAccess",
+                    event,
+                    caseDetails
+                    // caseDetails?.caseStage
+                  )
                 }
               >
                 No Show

@@ -108,7 +108,9 @@ const CaseModeView = ({
       pagination: newPagination,
       sortBy: sortBy,
     };
- 
+    setRowsPerPage(10);
+    setPage(0);
+
     if (selectedStage && userId) {
       getCaseLoadSummaryData(payload);
     }
@@ -186,7 +188,6 @@ const CaseModeView = ({
       setReassignInd(response?.reassignInd);
       setRows(cloneDeep(response.caseLoadSummaryList));
       setTotalCount(response.pagination.totalItemCount);
-      setPage(response.pagination.pageNumber-1);
     } catch (errorResponse) {
       const newErrMsgs = getMsgsFromErrorCode(
         `POST:${process.env.REACT_APP_CASELOAD_SUMMARY}`,
@@ -216,13 +217,12 @@ const CaseModeView = ({
   };
 
   return (
-    <>
+    <div style={{ maxHeight: "635px" }}>
       <Box
         sx={{
           mt: "2px",
           position: "absolute",
           right: "24px",
-          zIndex: "10",
         }}
       >
         <Link
@@ -237,10 +237,7 @@ const CaseModeView = ({
         </Link>
       </Box>
       <Box sx={{ paddingTop: 3, paddingBottom: 2 }}>
-        <TableContainer
-          component={Paper}
-          sx={{ maxHeight: "calc(100vh - 6.5rem)" }}
-        >
+        <TableContainer component={Paper} sx={{ maxHeight: "490px" }}>
           <Table
             sx={{ minWidth: 750 }}
             size="small"
@@ -343,7 +340,7 @@ const CaseModeView = ({
           Reassign Case
         </Button>
       </div>
-    </>
+    </div>
   );
 };
 

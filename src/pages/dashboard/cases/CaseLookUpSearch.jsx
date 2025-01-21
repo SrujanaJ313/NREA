@@ -208,14 +208,19 @@ function CaseLookUpSearch({ setLookUpSummary, setReqPayload }) {
   };
 
   return (
-    <Box width="35%" bgcolor="#FFFFFF" p={0} borderRight="2px solid #3b5998">
+    <Box
+      width="25%"
+      bgcolor="#FFFFFF"
+      borderRight="2px solid #3b5998"
+      height="100%"
+    >
       <form
         onSubmit={formik.handleSubmit}
         onReset={formik.handleReset}
         style={{ height: "100%" }}
       >
         <Stack
-          spacing={1.2}
+          spacing={1}
           sx={{
             height: "calc(100% - 3.2rem)",
             overflowY: "auto",
@@ -234,29 +239,38 @@ function CaseLookUpSearch({ setLookUpSummary, setReqPayload }) {
             },
           }}
         >
-          <Typography
-            sx={{
-              color: "#183084",
-              marginLeft: "0",
-              fontWeight: "bold",
-              width: "94%",
-              paddingLeft: "15px",
-            }}
-            variant="h6"
-            gutterBottom
-          >
-            Lookup Cases
-          </Typography>
-
           <Box display="flex" justifyContent="center">
-            {errorMessages.map((x) => (
-              <div key={x}>
-                <span className="errorMsg">*{x}</span>
-              </div>
-            ))}
+            <Typography
+              sx={{
+                color: "#183084",
+                margin: "0",
+                fontWeight: "bold",
+                width: "94%",
+                // paddingLeft: "15px",
+              }}
+              variant="h6"
+              gutterBottom
+            >
+              Lookup Cases
+            </Typography>
           </Box>
 
-          <Box display="flex" justifyContent="center">
+          {!!errorMessages?.length && (
+            <Box display="flex" justifyContent="center">
+              {errorMessages.map((x) => (
+                <div key={x}>
+                  <span className="errorMsg">*{x}</span>
+                </div>
+              ))}
+            </Box>
+          )}
+
+          <Box
+            display="flex"
+            marginTop="10px"
+            alignItems="center"
+            justifyContent="center"
+          >
             <ExpandableTableRow
               labelName={"Local Office"}
               options={dropdownOptions.officeNumOptions}
@@ -337,9 +351,9 @@ function CaseLookUpSearch({ setLookUpSummary, setReqPayload }) {
           <Box
             display="flex"
             justifyContent="center"
-            style={{ marginTop: "10px" }}
+            style={{ marginTop: "8px" }}
           >
-            <Stack direction="row" spacing={1} sx={{ width: "94%" }}>
+            <Stack direction="row" spacing={0.8} sx={{ width: "94%" }}>
               <TextField
                 id="rtwDaysMin"
                 name="rtwDaysMin"
@@ -526,7 +540,10 @@ function CaseLookUpSearch({ setLookUpSummary, setReqPayload }) {
                     fontWeight: "bold",
                   },
                 }}
-                disabled={!formik.values.orientationStartDt}
+                disabled={
+                  !formik.values.orientationStartDt &&
+                  !formik.values.orientationEndDt
+                }
               />
             </Stack>
           </Box>
@@ -582,7 +599,10 @@ function CaseLookUpSearch({ setLookUpSummary, setReqPayload }) {
                     fontWeight: "bold",
                   },
                 }}
-                disabled={!formik.values.initialApptStartDt}
+                disabled={
+                  !formik.values.initialApptStartDt &&
+                  !formik.values.initialApptEndDt
+                }
               />
             </Stack>
           </Box>
@@ -630,7 +650,10 @@ function CaseLookUpSearch({ setLookUpSummary, setReqPayload }) {
                 inputProps={{
                   min: formik.values.recentApptStartDt,
                 }}
-                disabled={!formik.values.recentApptStartDt}
+                disabled={
+                  !formik.values.recentApptStartDt &&
+                  !formik.values.recentApptEndDt
+                }
                 sx={{
                   "& .MuiInputLabel-root": {
                     color: formik.values.recentApptStartDt ? "#183084" : "gray",
@@ -746,7 +769,9 @@ function CaseLookUpSearch({ setLookUpSummary, setReqPayload }) {
                     color: formik.values.clmByeStartDt ? "#183084" : "gray",
                   },
                 }}
-                disabled={!formik.values.clmByeStartDt}
+                disabled={
+                  !formik.values.clmByeStartDt && !formik.values.clmByeEndDt
+                }
               />
             </Stack>
           </Box>
@@ -761,7 +786,7 @@ function CaseLookUpSearch({ setLookUpSummary, setReqPayload }) {
           flexDirection={"row-reverse"}
           gap={"10px"}
           marginRight={"10px"}
-          marginTop={"15px"}
+          marginTop={"10px"}
         >
           <Button
             color="primary"

@@ -14,6 +14,9 @@ import { AVAILABLE_LINK_BEFORE_DURATION } from "../../../helpers/Constants";
 import { getMsgsFromErrorCode } from "../../../helpers/utils";
 import Stack from "@mui/material/Stack";
 import { isInAvailableAppointmentWindow } from "../../../helpers/timerBuffer";
+import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
+import CancelIcon from "@mui/icons-material/Cancel";
+import { Tooltip } from "@mui/material";
 
 const localizer = momentLocalizer(moment);
 
@@ -99,6 +102,72 @@ function InterviewCalendarView({ userId, userName }) {
     }
   };
 
+  const statusIconMap = {
+    completed: (
+      <CheckCircleOutlineIcon
+        sx={{
+          color: "green",
+          margin: "0.1rem",
+          height: "0.85rem",
+          width: "1rem",
+        }}
+      />
+    ),
+    failed: (
+      <CancelIcon
+        sx={{
+          color: "red",
+          margin: "0.15rem",
+          height: "0.85rem",
+          width: "1rem",
+        }}
+      />
+    ),
+  };
+
+  const renderStatusIcon = (status) => {
+    const normalizedStatus = status?.toLowerCase();
+    const isRTW = normalizedStatus.includes("return to work");
+
+    const baseStatus = isRTW
+      ? normalizedStatus?.split(" - ")[0]
+      : normalizedStatus;
+    const icon = statusIconMap[baseStatus];
+    if (!icon) return null;
+    return (
+      <div
+        style={{
+          position: "absolute",
+          top: 0,
+          right: 0,
+        }}
+      >
+        <Tooltip
+          title={status}
+          placement="right-start"
+          style={{
+            display: "flex",
+            alignItems: "center",
+            marginBottom: "-0.35rem",
+          }}
+        >
+          {icon}
+        </Tooltip>
+        {isRTW && (
+          <span
+            style={{
+              color: "rgb(69 65 65)",
+              fontSize: "0.5rem",
+              fontWeight: "bold",
+            }}
+          >
+            RTW
+          </span>
+        )}
+      </div>
+    );
+  };
+
   const title = (event) => {
     return (
       <div
@@ -108,8 +177,16 @@ function InterviewCalendarView({ userId, userName }) {
           justifyContent: "center",
         }}
       >
-        {event.label}
+        {event?.usageDesc === "2nd Subsequent Appointment" &&
+        event?.label?.toLowerCase() !== "unused" &&
+        event?.label?.toLowerCase() !== "available" &&
+        event?.label?.length > 12 ? (
+          <span style={{ fontSize: "0.73rem" }}>{event?.label}</span>
+        ) : (
+          event?.label
+        )}
         {event.appointmentType === "V" && <GroupIcon />}
+        {event?.mtgStatusDesc && renderStatusIcon(event.mtgStatusDesc)}
       </div>
     );
   };
@@ -159,11 +236,17 @@ function InterviewCalendarView({ userId, userName }) {
       return "";
     },
     dayRangeHeaderFormat: ({ start, end }, culture, localizer) => {
-      return `${localizer.format(
-        start,
-        "MMMM DD",
-        culture
-      )} - ${localizer.format(end, "DD, yyyy", culture)}`;
+      const startMonth = localizer.format(start, "MMMM", culture);
+      const startYear = localizer.format(start, "yyyy", culture);
+      const startDay = localizer.format(start, "DD", culture);
+      const endMonth = localizer.format(end, "MMMM", culture);
+      const endYear = localizer.format(end, "yyyy", culture);
+      const endDay = localizer.format(end, "DD", culture);
+      if (startMonth !== endMonth || startYear !== endYear) {
+        return `${startMonth} ${startDay}, ${startYear} - ${endMonth} ${endDay}, ${endYear}`;
+      } else {
+        return `${startMonth} ${startDay} - ${endDay}, ${startYear}`;
+      }
     },
   };
 

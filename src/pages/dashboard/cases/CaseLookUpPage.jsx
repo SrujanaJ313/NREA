@@ -7,7 +7,7 @@ function CaseLookUpPage() {
   const [lookUpSummary, setLookUpSummary] = useState([]);
   const [reqPayload, setReqPayload] = useState({});
   return (
-    <Box display="flex">
+    <Box display="flex" style={{ height: "calc(100vh - 3rem)" }}>
       {/* Left Panel */}
       <CaseLookUpSearch
         setLookUpSummary={setLookUpSummary}

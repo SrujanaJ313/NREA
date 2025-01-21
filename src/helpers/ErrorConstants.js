@@ -44,7 +44,7 @@ export const ERROR_CODES_MAPPER = {
   reasonCodes: {
     "method.not.supported": "Requested HTTP method is not supported.",
     "not.found": "Requested resource not found.",
-    "validation.error": "Invalid date found in the request.",
+    "validation.error": "Invalid data found in the request.",
     "file.processing.failed": "An error occurred during file processing.",
     "internal.error":
       "An error occurred while processing your request. Please try again or contact the administrator for assistance.",
@@ -103,6 +103,9 @@ ERROR_CODES_MAPPER[`POST:${process.env.REACT_APP_SWITCH_SAVE}`] = {
     "Please enter the description for 'Switching Meeting Mode'",
   "currentMeetingMode.role.invalid":
     "User does not have access to switch Initial Appointment to 'Virtual' mode.",
+  "createIssue.invalid": "Please enter all fields for selected Create Issue.",
+  "createIssue.issueStartDt.invalid":
+    "The Start Date for a 'Create Issue' should be within the Benefit Year End date.",
 };
 
 ERROR_CODES_MAPPER[`POST:${process.env.REACT_APP_RETURNED_TO_WORK_SAVE}`] = {
@@ -127,6 +130,9 @@ ERROR_CODES_MAPPER[`POST:${process.env.REACT_APP_RETURNED_TO_WORK_SAVE}`] = {
     "Please verify the JMS checklist has been completed.",
   "employmentStartDt.afterRtwFutureDays":
     "Employment start date should be on or before 30 days from the current date.",
+  "createIssue.invalid": "Please enter all fields for selected Create Issue.",
+  "createIssue.issueStartDt.invalid":
+    "The Start Date for a 'Create Issue' should be within the Benefit Year End date.",
 };
 
 ERROR_CODES_MAPPER[`POST:${process.env.REACT_APP_RESCHEDULE_SAVE}`] = {
@@ -154,6 +160,9 @@ ERROR_CODES_MAPPER[`POST:${process.env.REACT_APP_RESCHEDULE_SAVE}`] = {
   "jobTitle.mandatory": "Job title is mandatory",
   "partFullTimeInd.mandatory": "Part time/Full time indicator is mandatory",
   "lateSchedulingReason.empty": "Please enter the reason for late scheduling",
+  "createIssue.invalid": "Please enter all fields for selected Create Issue.",
+  "createIssue.issueStartDt.invalid":
+    "The Start Date for a 'Create Issue' should be within the Benefit Year End date.",
 };
 
 ERROR_CODES_MAPPER[`POST:${process.env.REACT_APP_APPOINTMENT_SAVE}`] = {
@@ -173,6 +182,7 @@ ERROR_CODES_MAPPER[`POST:${process.env.REACT_APP_APPOINTMENT_SAVE}`] = {
   "status.mandatory": "Status is mandatory",
   "createIssue.issueStartDt.invalid":
     "The Start Date for a 'Create Issue' should be within the Benefit Year End date.",
+  "createIssue.invalid": "Please enter all fields for selected Create Issue.",
 };
 
 ERROR_CODES_MAPPER[
@@ -272,7 +282,29 @@ ERROR_CODES_MAPPER[
     "Copy of EP and Checklist uploaded into JMS is mandatory",
   "workSearchIssues.edit.invalid":
     "Work Search Review cannot be edited for existing entries where issues have been created.",
-  // sample msg. todo replace with actual one
+  "workSearchIssues.duplicate":
+    "Work Search issue {0} already exists for week ending {1}. Please remove or change the Issue.",
+  "otherIssues.duplicate":
+    "Other Issue {0} already exists for Start Date {1} and End Date {2}. Please remove or change the Issue.",
+  "jmsResumeExpDt.invalid":
+    "Active Resume Expiration date should be a valid future date.",
+  "jmsVRExpDt.invalid":
+    "Virtual Recruiter Expiration date should be a valid future date.",
+  "JMSRegIncomplete.mandatory":
+    "JMS Registration Incomplete & Warning Issued is mandatory.",
+  "selfSchByDt.mandatory":
+    "Self-schedule by date is mandatory when option is selected. Please enter valid date.",
+  "selfSchByDt.invalid":
+    "Self-schedule by date should be future date with in 10 days of the appointment. Please enter valid date.",
+  "jmsVRExpDt.mandatory":
+    "Virtual Recruiter Expiration date is mandatory when option is selected. Please enter valid date.",
+  "jmsResumeExpDt.mandatory":
+    "Active Resume Expiration date is mandatory when option is selected. Please enter valid date.",
+  "assignedMrpChap.mandatory":
+    "Please select chapters for Assigned My Reemployment Plan.",
+  "empServicesConfirmInd.mandatory":
+    "Please select checkbox confirming that Employment Services have been provided.",
+  "createIssue.invalid": "Please enter all fields for selected Create Issue.",
 };
 ERROR_CODES_MAPPER[`POST:${process.env.REACT_APP_REASSIGN_SAVE}`] = {
   "eventld.notAvailable":
@@ -283,12 +315,26 @@ ERROR_CODES_MAPPER[`POST:${process.env.REACT_APP_REASSIGN_SAVE}`] = {
     "Please select lookup case manager availability office",
   "caseld.mandatory": "Case ID is mandatory",
   "eventld.mandatory": "Event ID is mandatory",
+  "eventId.mismatch":
+    "Case Stage and Apponinment Selected do not match. Please select appropriate appointment.",
+  "reassign.access.invalid": "User does not have access to Reassign cases.",
+  "applyUnavailibility.failed":
+    "Request Processed. However, unavailablity could not be applied. Please Contact WeCare.",
 };
 ERROR_CODES_MAPPER[`POST:${process.env.REACT_APP_APPOINTMENT_AVAILABLE}`] = {
   "createIssue.issueEndDt.priorToBye":
     "End Date for a Create Issue should be prior to Current Benefit Year End Date.",
   "for.lof.invalid": "User does not have access to For Local Office option",
   "for.mgr.invalid": "User does not have access to For Case Manager option",
+  "for.mandatory": "Appointment Slot is not Available.",
+  "claimId.mandatory":
+    "Please select a claimant for scheduling the appointment.",
+  "informedConveyedBy.mandatory":
+    "Please check option by which information was convyed to claimant.",
+  "lateStaffNote.mandatory":
+    "Appointment is scheduled beyond the RESEA Deadline, please submit Late Notes.",
+  "informedCmtInd.mandatory":
+    "Please inform claimant and select Informed Claimant to check claimant portal.",
 };
 ERROR_CODES_MAPPER[
   `POST:${process.env.REACT_APP_APPOINTMENTS_LOOK_UP_SUMMARY}`
@@ -308,6 +354,100 @@ ERROR_CODES_MAPPER[`POST:${process.env.REACT_APP_REOPEN_URL}`] = {
   "reopen.stage.expired":
     "Appointment cannot be reopened. Case has progressed to next stage.",
 };
-ERROR_CODES_MAPPER[`POST:${process.env.REACT_APP_CASE_KPI_SUMMARY}`] ={
-  "kpi.input.invalid": "Atleast one the following criteria should be selected. Case Mgr/Lof/Agency.",
-}
+ERROR_CODES_MAPPER[`POST:${process.env.REACT_APP_CASE_KPI_SUMMARY}`] = {
+  "kpi.input.invalid":
+    "At least one the following criteria should be selected. Case Mgr/Lof/Agency.",
+};
+ERROR_CODES_MAPPER[`POST:${process.env.REACT_APP_CASE_SCHEDULE_SAVE}`] = {
+  "clmLofInd.input.invalid":
+    "Please select the local office option for case manager availability",
+};
+
+// staff-unavailability
+ERROR_CODES_MAPPER[`POST:${process.env.REACT_APP_UNAVAILABILITY}`] = {
+  "userId.mandatory": "User ID is mandatory.",
+  "startDt.mandatory": "Start Date is mandatory.",
+  "endDt.invalid": "Unavailability End Date cannot be prior to Start Date",
+};
+
+ERROR_CODES_MAPPER[`GET:${process.env.REACT_APP_UNAVAILABILITY_DETAIL}`] = {
+  "unavailabilityId.notFound": "Unavailability Record is not found",
+};
+
+ERROR_CODES_MAPPER[`POST:${process.env.REACT_APP_UNAVAILABILITY_REQUEST}`] = {
+  "userId.mandatory": "User ID is mandatory.",
+  "unavailabilityId.notFound": "Unavailability Record is not found",
+  "startDt.mandatory": "Start Date is mandatory.",
+  "endDt.mandatory": "End Date is mandatory.",
+  "endDt.invalid": "Unavailability End Date cannot be prior to Start Date",
+  "reason.mandatory": "Unavailability Reason is mandatory",
+  "startTime.mandatory": "Start Time is mandatory.",
+  "endTime.mandatory": "End Time is mandatory.",
+  "request.startDt.invalid":
+    "Unavailability Start date cannot be a past date. Please modify unavailability request.",
+  "request.events.invalid":
+    "Scheduled appointments are present during the unavailability period being requested. Please modify unavailability request or reschedule appointments that have previously been scheduled during this unavailability request.",
+  "request.access.invalid":
+    "User does not have access to request Unavailability for another case manager",
+  "notes.mandatory": "Unavailability Notes is mandatory.",
+  "request.unavailability.exists":
+    "Overlapping Staff Unavailability exists for request period. Please modify unavailability request.",
+};
+
+ERROR_CODES_MAPPER[`POST:${process.env.REACT_APP_UNAVAILABILITY_APPROVE}`] = {
+  "userId.mandatory": "User ID is mandatory.",
+  "startDt.mandatory": "Start Date is mandatory.",
+  "endDt.mandatory": "End Date is mandatory.",
+  "endDt.invalid": "Unavailability End Date cannot be prior to Start Date",
+  "reason.mandatory": "Unavailability Reason is mandatory",
+  "startTime.mandatory": "Start Time is mandatory.",
+  "endTime.mandatory": "End Time is mandatory.",
+  "notes.mandatory": "Unavailability Notes is mandatory.",
+  "approve.access.invalid":
+    "User does not have access to approve Unavailability request",
+  "approve.status.invalid":
+    "Cannot Approve Unavailability. Unavailability Record is not in pending status.",
+  "request.events.invalid":
+    "Scheduled appointments are present during the unavailability period being requested. Please modify unavailability request or reschedule appointments that have previously been scheduled during this unavailability request.",
+  "approve.failed":
+    "Unavailability could not be approved. Please Contact WeCare.",
+  "unavailability.admin":
+    "Unable to process Staff Unavailablility. Please conctact admin.",
+  "unavailability.schedule.admin":
+    "Unable to generate Block Staff Calendar records for the duration of Unavailablility. Please conctact admin.",
+  "unavailability.stun.admin":
+    "Unable to generate Staff Unavailablility records for the duration of Unavailablility. Please conctact admin.",
+  "unavailability.exists.invalid":
+    "Staff Unavailability already exists for provided Unavailability ID.",
+  "unavailabilityId.invalid": "Unavailability ID is Invalid. No Record exists.",
+};
+
+ERROR_CODES_MAPPER[`POST:${process.env.REACT_APP_UNAVAILABILITY_REJECT}`] = {
+  "userId.mandatory": "User ID is mandatory.",
+  "unavailabilityId.notFound": "Unavailability Record is not found",
+  "endDt.invalid": "Unavailability End Date cannot be prior to Start Date",
+  "reject.access.invalid":
+    "User does not have access to reject Unavailability request",
+  "reject.status.invalid":
+    "Cannot Reject Unavailability. Unavailability Record is not in pending status.",
+};
+
+ERROR_CODES_MAPPER[`POST:${process.env.REACT_APP_UNAVAILABILITY_WITHDRAW}`] = {
+  "userId.mandatory": "User ID is mandatory.",
+  "unavailabilityId.notFound": "Unavailability Record is not found",
+  "withdraw.access.invalid":
+    "User does not have access to withdraw this Unavailability request.",
+  "withdraw.date.invalid":
+    "Withdraw Date cannot be prior to Unavailability start date or after Unavailability end date.",
+  "withdraw.note.mandatory": "Withdraw Notes is mandatory.",
+  "withdraw.failed":
+    "Unavailability could not be removed. Please Contact WeCare.",
+  "unavailabilityId.mandatory": "Unavailability ID is mandatory.",
+  "notes.mandatory": "Unavailability Notes is mandatory.",
+  "withdrawTime.mandatory": "Unavailability Withdraw Time is mandatory.",
+  "withdraw.invalid":
+    "Unavailability duration has started, please enter valid withdraw date.",
+};
+
+ERROR_CODES_MAPPER[`GET:${process.env.REACT_APP_CASE_UNAVAILABILITY_REASON}`] =
+  {};

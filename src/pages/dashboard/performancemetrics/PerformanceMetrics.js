@@ -20,6 +20,8 @@ import {
 } from "../../../helpers/Urls";
 import client from "../../../helpers/Api";
 import { genericSortOptionsAlphabetically } from "../../../helpers/utils";
+import { CookieNames, getCookieItem } from "../../../utils/cookies";
+import { isCaseManager } from "../../../utils/users";
 
 const Container = styled(Box)(({ theme }) => ({
   width: "100%",
@@ -59,25 +61,41 @@ const Value = styled(Box)(({ theme }) => ({
 //   },
 // }));
 
-const StatItem = ({ label, value, percentage }) => (
-  <Grid container spacing={0.9} alignItems="center">
-    <Grid item xs={6}>
-      <Label>{label}</Label>
-    </Grid>
-    <Grid
-      item
-      xs={!percentage?.toString() ? 0.6 : 3}
-      textAlign={!percentage?.toString() ? "right" : "inherit"}
-    >
-      <Value>{value}</Value>
-    </Grid>
-    {percentage?.toString() && (
-      <Grid item xs={3}>
-        <Value>{percentage}%</Value>
+const StatItem = ({ label, value, percentage }) => {
+  return (
+    <Grid container spacing={0.9} alignItems="left">
+      <Grid item xs={6}>
+        <Label>{label}</Label>
       </Grid>
-    )}
-  </Grid>
-);
+      <Grid
+        item
+        // xs={!percentage?.toString() ? 0.8 : 3}
+        xs={
+          [
+            "Caseload:",
+            "Avg weeks to employment:",
+            "Remote:",
+            "In-person:",
+            "Inadequate WS-claimant:",
+            "Inadequate WS-Weeks:",
+            "Job Referrals:",
+          ].includes(label)
+            ? 2.8
+            : 3
+        }
+        // textAlign={!percentage?.toString() ? "right" : "inherit"}
+      >
+        <Value>{value}</Value>
+      </Grid>
+      {/* ["Remote:"].includes(label) */}
+      {percentage?.toString() && (
+        <Grid item xs={3}>
+          <Value>{percentage}%</Value>
+        </Grid>
+      )}
+    </Grid>
+  );
+};
 
 const PerformanceMetrics = ({ userId }) => {
   const [period, setPeriod] = useState("THREE_MONTHS");
@@ -118,17 +136,17 @@ const PerformanceMetrics = ({ userId }) => {
         value: kpiSummary?.noShowFailedCount,
         percentage: kpiSummary?.noShowFailedPercent,
       },
-      {
-        label: "Remote:",
-        value: kpiSummary?.remoteApptCount,
-        percentage: kpiSummary?.remoteApptPercent,
-      },
-      {
-        label: "In-person:",
-        value: kpiSummary?.inPersonApptCount,
-        percentage: kpiSummary?.inPersonApptPercent,
-      },
     ],
+    remote: {
+      label: "Remote:",
+      value: kpiSummary?.remoteApptCount,
+      percentage: kpiSummary?.remoteApptPercent,
+    },
+    inPerson: {
+      label: "In-person:",
+      value: kpiSummary?.inPersonApptCount,
+      percentage: kpiSummary?.inPersonApptPercent,
+    },
     inadequateWorkSearches: kpiSummary?.noOfInadequateWSCmts,
     jobReferralsMade: kpiSummary?.noOfJobReferralsMade,
     inadequateWSWeeks: kpiSummary?.noOfInadequateWSWeeks,
@@ -140,24 +158,40 @@ const PerformanceMetrics = ({ userId }) => {
       url: appointmentsCaseManagerURL,
       setData: setCaseManager,
       propertyName: "name",
+      checkCaseManager: true,
     },
     LocalOffice: {
       url: appointmentsLocalOfficeURL,
       setData: setLocalOffice,
       propertyName: "officeName",
+      checkCaseManager: false,
     },
   };
+  function fetchCaseManager() {
+    const caseManagerUserId = getCookieItem(CookieNames.USER_ID);
+    const caseManagerName = JSON.parse(
+      getCookieItem(CookieNames.USER)
+    )?.userName;
+    return [
+      {
+        id: Number(caseManagerUserId),
+        name: caseManagerName,
+      },
+    ];
+  }
 
   useEffect(() => {
     async function loadData(fieldName) {
       try {
-        const { url, setData, propertyName } = onPageLoadFields[fieldName];
-        const data = await client.get(url);
+        const { url, setData, propertyName, checkCaseManager } =
+          onPageLoadFields[fieldName];
+        const data =
+          checkCaseManager && isCaseManager()
+            ? fetchCaseManager()
+            : await client.get(url);
         const sortedData = genericSortOptionsAlphabetically(data, propertyName);
         setData(sortedData);
-      } catch (errorResponse) {
-        console.error("Error in Performance metrics loadData", errorResponse);
-      }
+      } catch (errorResponse) {}
     }
 
     Promise.all(
@@ -170,9 +204,7 @@ const PerformanceMetrics = ({ userId }) => {
       try {
         const result = await client.post(kpiSummaryURL, payload);
         setKpiSummary(result);
-      } catch (errorResponse) {
-        console.error("Error in postKPISummary", errorResponse);
-      }
+      } catch (errorResponse) {}
     }
     if (!period) {
       return;
@@ -207,7 +239,7 @@ const PerformanceMetrics = ({ userId }) => {
   return (
     <Container
       sx={{
-        height: "calc(100% - 5.1rem)",
+        // height: "calc(100% - 5.1rem)",
         overflowY: "auto",
         "&::-webkit-scrollbar": {
           width: "5px",
@@ -264,6 +296,7 @@ const PerformanceMetrics = ({ userId }) => {
                   const user = caseManager.find(
                     (s) => s.id === Number(e.target.value)
                   );
+
                   setCaseManagerId(user.id);
                 }}
                 sx={{ height: "35px" }}
@@ -282,6 +315,7 @@ const PerformanceMetrics = ({ userId }) => {
             <FormControlLabel
               value="LocalOffice"
               control={<Radio />}
+              disabled={isCaseManager()}
               label=""
               sx={{ marginRight: 0 }}
             />
@@ -311,6 +345,7 @@ const PerformanceMetrics = ({ userId }) => {
                 id="localOfficeId"
                 value={localOfficeId}
                 label="Local Office"
+                disabled={isCaseManager()}
                 onChange={(e) => {
                   const office = localOffice.find(
                     (s) => s.officeNum === Number(e.target.value)
@@ -334,6 +369,7 @@ const PerformanceMetrics = ({ userId }) => {
               value="Agency"
               control={<Radio />}
               label="Agency"
+              disabled={isCaseManager()}
               sx={{
                 ".MuiFormControlLabel-label": {
                   color: "#183084",
@@ -390,6 +426,16 @@ const PerformanceMetrics = ({ userId }) => {
           />
         ))}
       </Box>
+      <StatItem
+        label={data.remote.label}
+        value={data.remote.value}
+        percentage={data.remote.percentage}
+      />
+      <StatItem
+        label={data.inPerson.label}
+        value={data.inPerson.value}
+        percentage={data.inPerson.percentage}
+      />
 
       <StatItem
         label="Inadequate WS-claimant:"

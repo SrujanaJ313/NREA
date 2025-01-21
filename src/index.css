@@ -34,3 +34,10 @@ code {
   font-weight: bold;
   text-decoration: underline;
 }
+
+.cursor-pointer {
+  cursor: pointer;
+}
+.rbc-toolbar-label {
+  margin-right: 12%;
+}

@@ -36,6 +36,7 @@ import AppointmentLookUpPage from "../pages/dashboard/appointments/AppointmentLo
 import moment from "moment";
 import CaseSummaryPageWithProvider from "../pages/dashboard/caseSummary/CaseSummaryPage";
 import PendingScheduleResult from "../pages/dashboard/pendingSchedule/PendingScheduleResult";
+import StaffUnavailability from "../pages/unavailability";
 
 const PrivateRoute = () => {
   const [loading, setLoading] = useState(false);
@@ -149,6 +150,10 @@ function AppRoutes() {
           <Route
             element={<CaseSummaryPageWithProvider />}
             path="/case-summary/:caseId"
+          />
+          <Route
+            element={<StaffUnavailability />}
+            path="/staff-unavailability"
           />
         </Route>
         <Route element={<UnAuthorised />} path="/unAuthorised" />

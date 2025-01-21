@@ -103,7 +103,12 @@ export const isInCurrentZoomWindow = (event) => {
   );
 };
 
-export const isCaseAccessPresent = (accessFlagField, event, caseDetails) => {
+export const isCaseAccessPresent = (
+  accessFlagField,
+  event,
+  caseDetails
+  // caseStage
+) => {
   switch (accessFlagField) {
     case "rescheduleAccess": {
       return (
@@ -111,6 +116,7 @@ export const isCaseAccessPresent = (accessFlagField, event, caseDetails) => {
           caseDetails?.[accessFlagField] === "V") &&
           isInFutureAppointmentWindow(event)) ||
         caseDetails?.reopenInd === "Y"
+        // &&        caseStage !== "Terminated"
       );
     }
     case "switchModeAccess": {
@@ -124,6 +130,8 @@ export const isCaseAccessPresent = (accessFlagField, event, caseDetails) => {
           caseDetails?.[accessFlagField] === "V") &&
         checkInitialAppointmentCondition &&
         isInFutureAppointmentWindow(event)
+        // &&
+        // caseStage !== "Terminated"
       );
     }
     case "returnToWorkAccess": {
@@ -131,6 +139,8 @@ export const isCaseAccessPresent = (accessFlagField, event, caseDetails) => {
         (caseDetails?.[accessFlagField] === "Y" ||
           caseDetails?.[accessFlagField] === "V") &&
         isInRTWBufferPeriod(event)
+        // &&
+        // caseStage !== "Terminated"
       );
     }
     case "appointmentAccess": {
@@ -139,6 +149,8 @@ export const isCaseAccessPresent = (accessFlagField, event, caseDetails) => {
           caseDetails?.[accessFlagField] === "V") &&
           isInAppointmenDetailsWindow(event)) ||
         caseDetails?.reopenInd === "Y"
+        // ) &&
+        // caseStage !== "Terminated"
       );
     }
     case "noShowAccess": {
@@ -147,8 +159,11 @@ export const isCaseAccessPresent = (accessFlagField, event, caseDetails) => {
           caseDetails?.[accessFlagField] === "V") &&
           isInCurrentAppointmentWindow(event)) ||
         caseDetails?.reopenInd === "Y"
+        // ) &&
+        // caseStage !== "Terminated"
       );
     }
+
     default:
       return false;
   }

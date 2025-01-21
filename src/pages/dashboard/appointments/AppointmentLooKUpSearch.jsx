@@ -31,7 +31,7 @@ import {
 import { useSnackbar } from "../../../context/SnackbarContext";
 import ExpandableTableRow from "./ExpandableTableRow";
 
-function LookUpAppointments({ setLookUpSummary, setReqPayload }) {
+function LookUpAppointments({ setLookUpSummary, setReqPayload, setLoading }) {
   const [errorMessages, setErrorMessages] = useState([]);
   const showSnackbar = useSnackbar();
   const [dropdownOptions, setDropdownOptions] = useState({
@@ -105,6 +105,7 @@ function LookUpAppointments({ setLookUpSummary, setReqPayload }) {
     },
     validationSchema: () => lookUpAppointmentsValidationSchema(formik),
     onSubmit: async (values) => {
+      setLoading(true);
       const dateFields = [
         "apptStartDt",
         "apptEndDt",
@@ -145,9 +146,11 @@ function LookUpAppointments({ setLookUpSummary, setReqPayload }) {
         console.log("submited payload-->\n", payload);
         setReqPayload(payload);
         const result = await client.post(appointmentsLookUpSummaryURL, payload);
+        setLoading(false);
         setLookUpSummary([result]);
         showSnackbar("Request has been submitted successfully.", 5000);
       } catch (errorResponse) {
+        setLoading(false);
         console.log("errorResponse-->\n", errorResponse);
         const newErrMsgs = getMsgsFromErrorCode(
           `POST:${process.env.REACT_APP_APPOINTMENTS_LOOK_UP_SUMMARY}`,
@@ -307,7 +310,9 @@ function LookUpAppointments({ setLookUpSummary, setReqPayload }) {
                     color: formik.values.apptStartDt ? "#183084" : "gray",
                   },
                 }}
-                disabled={!formik.values.apptStartDt}
+                disabled={
+                  !formik.values.apptStartDt && !formik.values.apptEndDt
+                }
               />
             </Stack>
           </Box>
@@ -488,7 +493,9 @@ function LookUpAppointments({ setLookUpSummary, setReqPayload }) {
                     color: formik.values.clmByeStartDt ? "#183084" : "gray",
                   },
                 }}
-                disabled={!formik.values.clmByeStartDt}
+                disabled={
+                  !formik.values.clmByeStartDt && !formik.values.clmByeEndDt
+                }
               />
             </Stack>
           </Box>

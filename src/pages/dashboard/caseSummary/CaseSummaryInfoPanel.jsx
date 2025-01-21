@@ -49,6 +49,7 @@ const CaseSummaryInfoPanel = () => {
     jobReferrals,
   } = caseSummaryData;
 
+  const lateIndicatorValue = ">21";
   return (
     <Box sx={{ mt: 4, mb: 4 }}>
       <Box sx={{ pb: 3 }}>
@@ -85,7 +86,13 @@ const CaseSummaryInfoPanel = () => {
             <LabelTypography component={"span"} className="label-text">
               Indicators:
             </LabelTypography>
-            <ValueTypography component={"span"}>{indicators}</ValueTypography>
+            <ValueTypography component={"span"}>
+              {indicators?.toLowerCase()?.includes("late") ? (
+                <span style={{ color: "#ab0c0c" }}>{lateIndicatorValue}</span>
+              ) : (
+                indicators
+              )}
+            </ValueTypography>
           </Grid>
           <Grid item xs={12} sm={6} md={2.4}>
             <LabelTypography component={"span"} className="label-text">
@@ -97,7 +104,9 @@ const CaseSummaryInfoPanel = () => {
             <LabelTypography component={"span"} className="label-text">
               Profile Score:
             </LabelTypography>
-            <ValueTypography component={"span"}>{profileScore}</ValueTypography>
+            <ValueTypography component={"span"}>
+              {profileScore ? profileScore : " -- "}
+            </ValueTypography>
           </Grid>
           <Grid item xs={12} sm={6} md={2.4}>
             <LabelTypography component={"span"} className="label-text">

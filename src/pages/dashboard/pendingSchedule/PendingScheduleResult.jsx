@@ -14,6 +14,10 @@ import {
   Typography,
   Tooltip,
   Link,
+  FormControlLabel,
+  Radio,
+  Button,
+  DialogContent,
 } from "@mui/material";
 import TablePagination from "@mui/material/TablePagination";
 import TableSortLabel from "@mui/material/TableSortLabel";
@@ -23,6 +27,10 @@ import { getMsgsFromErrorCode } from "../../../helpers/utils";
 import { tableSortActiveLabel } from "../../../helpers/styles";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import { Link as RouterLink } from "react-router-dom";
+import { v4 as uuidv4 } from "uuid";
+import CustomModal from "../../../components/customModal/CustomModal";
+import Schedule from "../caseModeView/Schedule";
+import moment from "moment";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   backgroundColor: theme.palette.primary.main,
@@ -46,6 +54,10 @@ const columns = [
     id: "caseId",
     label: "Case #",
   }, */
+  {
+    id: "radio",
+    label: "",
+  },
   {
     id: "officeName",
     label: "Local Office",
@@ -84,6 +96,8 @@ const PendingScheduleResult = () => {
   const [totalCount, setTotalCount] = useState(0);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [selectedRow, setSelectedRow] = useState(null);
+  const [open, setOpen] = useState(false);
 
   const [pagination, setPagination] = useState({
     pageNumber: 1,
@@ -106,7 +120,12 @@ const PendingScheduleResult = () => {
     setErrorMessages([]);
     try {
       const response = await client.post(casePendingScheduleURL, payload);
-      setLookupReferences(response?.summaryDTO);
+      const enhancedData =
+        response?.summaryDTO?.map((item, index) => ({
+          ...item,
+          id: uuidv4(),
+        })) || [];
+      setLookupReferences(enhancedData);
       setTotalCount(response?.pagination?.totalItemCount);
       setLoading(false);
     } catch (errorResponse) {
@@ -177,8 +196,35 @@ const PendingScheduleResult = () => {
     if (lookupReferences.length) fetchCaseLookUpList(payload);
   };
 
+  const getTitle = () => {
+    return (
+      <>
+        <span style={{ paddingRight: "5%" }}>
+          Claimant Name: {selectedRow?.claimantName}
+        </span>
+        <span style={{ paddingRight: "5%" }}></span>
+        <span style={{ paddingRight: "10%" }}>
+          BYE: {moment(selectedRow?.byeDt).format("MM/DD/YYYY")}
+        </span>
+        <span style={{ paddingRight: "10%" }}>Stage: {selectedRow?.stage}</span>
+      </>
+    );
+  };
+
   const renderTableCellContent = (column, row) => {
     switch (column.id) {
+      case "radio":
+        return (
+          <div style={{ margin: "-0.5rem 0 0 0.5rem" }}>
+            <FormControlLabel
+              value={row?.id}
+              control={<Radio />}
+              label=""
+              checked={row?.id === selectedRow?.id}
+              onChange={() => setSelectedRow(row)}
+            />
+          </div>
+        );
       case "claimantName":
         return (
           <Stack direction="row" alignItems="center" sx={{ width: "90%" }}>
@@ -196,7 +242,7 @@ const PendingScheduleResult = () => {
         return `${row?.followUpType || ""} ${row?.followUpDt || ""}`;
       case "caseId":
         return row?.caseId;
-      case "stage":
+      /* case "stage":
         return (
           <Stack direction="row" alignItems="center" sx={{ width: "85%" }}>
             <Typography sx={{ flexGrow: 1 }}>{row?.stage}</Typography>
@@ -206,7 +252,7 @@ const PendingScheduleResult = () => {
               </Tooltip>
             )}
           </Stack>
-        );
+        ); */
       default:
         return row[column.id] || "";
     }
@@ -214,6 +260,21 @@ const PendingScheduleResult = () => {
 
   return (
     <div style={{ margin: "1rem", height: "calc(100vh - 6.8rem)" }}>
+      <Box display="flex" justifyContent="flex-start">
+        <Typography
+          sx={{
+            color: "#183084",
+            margin: "0",
+            marginBottom: "10px",
+            fontWeight: "bold",
+            width: "94%",
+          }}
+          variant="h6"
+          gutterBottom
+        >
+          Initial Appointments to be Scheduled
+        </Typography>
+      </Box>
       <Box>
         <TableContainer
           component={Paper}
@@ -227,7 +288,7 @@ const PendingScheduleResult = () => {
                     key={column.id}
                     sx={{
                       verticalAlign: "top",
-                      padding: "0.4rem 0.8rem 1rem 0.8rem",
+                      padding: "0.2rem 0.1rem 0.6rem 0.1rem",
                     }}
                   >
                     <TableSortLabel
@@ -261,7 +322,7 @@ const PendingScheduleResult = () => {
                           key={column.id}
                           sx={{
                             verticalAlign: "top",
-                            padding: "0.4rem 0.8rem 1rem 0.8rem",
+                            padding: "0.2rem 0.1rem 0.4rem 0.1rem",
                           }}
                         >
                           {renderTableCellContent(column, row)}
@@ -295,7 +356,32 @@ const PendingScheduleResult = () => {
             </div>
           ))}
         </Stack>
+        {lookupReferences.length ? (
+          <div>
+            <Button
+              variant="contained"
+              color="primary"
+              disabled={!selectedRow}
+              onClick={() => setOpen(true)}
+              style={{ margin: "-2.5rem 0 0 1.5rem" }}
+            >
+              Schedule
+            </Button>
+          </div>
+        ) : null}
       </Box>
+
+      <CustomModal title={getTitle()} open={open} maxWidth="md">
+        <DialogContent dividers sx={{ paddingBottom: 1 }}>
+          <Stack>
+            <Schedule
+              onCancel={() => setOpen(false)}
+              selectedRow={selectedRow}
+              setSelectedRow={setSelectedRow}
+            />
+          </Stack>
+        </DialogContent>
+      </CustomModal>
     </div>
   );
 };

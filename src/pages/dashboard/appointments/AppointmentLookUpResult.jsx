@@ -21,6 +21,7 @@ import { appointmentsLookUpSummaryURL } from "../../../helpers/Urls";
 import { getMsgsFromErrorCode } from "../../../helpers/utils";
 import { tableSortActiveLabel } from "../../../helpers/styles";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
+import LinearProgress from "@mui/material/LinearProgress";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   backgroundColor: theme.palette.primary.main,
@@ -73,8 +74,12 @@ const columns = [
   },
 ];
 
-const LookUpAppointmentTable = ({ lookUpSummary, reqPayload }) => {
-  const [loading, setLoading] = useState(false);
+const LookUpAppointmentTable = ({
+  lookUpSummary,
+  reqPayload,
+  loading,
+  setLoading,
+}) => {
   const [errorMessages, setErrorMessages] = useState([]);
   const [lookupReferences, setLookupReferences] = useState([]);
   const [totalCount, setTotalCount] = useState(0);
@@ -112,6 +117,7 @@ const LookUpAppointmentTable = ({ lookUpSummary, reqPayload }) => {
     setErrorMessages([]);
     try {
       const response = await client.post(appointmentsLookUpSummaryURL, payload);
+      setLoading(false);
       setLookupReferences(response.summaryDTO);
       setTotalCount(response.pagination.totalItemCount);
       setLoading(false);
@@ -275,6 +281,7 @@ const LookUpAppointmentTable = ({ lookUpSummary, reqPayload }) => {
             </TableBody>
           </Table>
         </TableContainer>
+        {loading && <LinearProgress />}
         <TablePagination
           rowsPerPageOptions={[10, 25, 100]}
           component="div"

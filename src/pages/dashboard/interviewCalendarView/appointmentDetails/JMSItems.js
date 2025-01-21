@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Stack from "@mui/material/Stack";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
@@ -17,12 +17,26 @@ import {
   FormControl,
   TextField,
   Button,
+  Autocomplete,
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import moment from "moment";
+import { employeeSearchURL } from "../../../../helpers/Urls";
+import client from "../../../../helpers/Api";
 
-function JMSItems({ formik, jmsItemsList, disableForm }) {
+function JMSItems({ formik, jmsItemsList, disableForm, employerNames }) {
   const { touched, values, errors, handleBlur, setFieldValue } = formik;
+  const [employeeName, setEmployeeName] = useState("");
+  const [options, setOptions] = useState([]);
+  useEffect(() => {
+    if (employeeName.length < 2) {
+      return;
+    }
+    const timer = setTimeout(() => getEmployeeNames(employeeName), 200);
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [employeeName]);
 
   const handleCheckboxChange = (event) => {
     const { name, checked } = event.target;
@@ -39,13 +53,6 @@ function JMSItems({ formik, jmsItemsList, disableForm }) {
     if (name === "ActiveResume" && !checked) {
       setFieldValue("jmsResumeExpDt", null);
     }
-
-    // if (name === "JMSRegComplete") {
-    //   setFieldValue("jmsItems.JMSRegIncomplete", false);
-    // }
-    // if (name === "JMSRegIncomplete") {
-    //   setFieldValue("jmsItems.JMSRegComplete", false);
-    // }
   };
 
   const handleDateValueChange = (value, name) => {
@@ -84,10 +91,25 @@ function JMSItems({ formik, jmsItemsList, disableForm }) {
     setFieldValue(name, rows);
   };
 
-  const handleTextChange = (event, index, key) => {
-    const rows = values[key];
+  async function getEmployeeNames(value) {
+    try {
+      const payload = {
+        empName: value,
+      };
+
+      const data = await client.post(employeeSearchURL, payload);
+      setOptions(data);
+    } catch (err) {}
+  }
+  const handleTextChange = async (event, index, key) => {
     const { name, value } = event.target;
+
+    let rows = values[key];
+    if (name === "empName") {
+      setEmployeeName(value);
+    }
     rows[index][name] = value;
+
     setFieldValue(key, rows);
   };
 
@@ -103,9 +125,6 @@ function JMSItems({ formik, jmsItemsList, disableForm }) {
           <>
             <Stack
               key={item.value}
-              // sx={{
-              //   width: index % 3 === 0 ? "50%" : index > 12 ? "50%" : "25%",
-              // }}
               sx={{
                 width: "33%",
               }}
@@ -217,27 +236,45 @@ function JMSItems({ formik, jmsItemsList, disableForm }) {
                               size="small"
                               style={{ width: "15rem" }}
                             >
-                              <TextField
-                                type="text"
-                                variant="outlined"
-                                size="small"
-                                name="empName"
-                                label="Employer Name"
-                                value={row.empName}
-                                onChange={(event) =>
+                              <Autocomplete
+                                freeSolo
+                                options={options.length ? options : []}
+                                getOptionLabel={(option) => option.empName}
+                                inputValue={row?.empName || ""}
+                                onInputChange={(_event, newInputValue) => {
                                   handleTextChange(
-                                    event,
+                                    {
+                                      target: {
+                                        name: "empName",
+                                        value: newInputValue,
+                                      },
+                                    },
                                     index,
                                     item.editFieldName
-                                  )
-                                }
-                                onBlur={handleBlur}
-                                error={
-                                  touched[item.editFieldName]?.[index]
-                                    ?.empName &&
-                                  errors[item.editFieldName]?.[index]?.empName
-                                }
-                                disabled={disableForm}
+                                  );
+                                }}
+                                onChange={(_event, selectedOption) => {
+                                  if (selectedOption?.empNum) {
+                                    row["empNum"] = selectedOption.empNum;
+                                  }
+                                }}
+                                renderInput={(params) => (
+                                  <TextField
+                                    {...params}
+                                    variant="outlined"
+                                    size="small"
+                                    name="empName"
+                                    label="Employer Name"
+                                    onBlur={handleBlur}
+                                    error={
+                                      touched[item.editFieldName]?.[index]
+                                        ?.empName &&
+                                      errors[item.editFieldName]?.[index]
+                                        ?.empName
+                                    }
+                                    disabled={disableForm}
+                                  />
+                                )}
                               />
                             </FormControl>
                             <FormControl
@@ -282,7 +319,6 @@ function JMSItems({ formik, jmsItemsList, disableForm }) {
                             >
                               <RemoveCircleIcon
                                 fontSize="small"
-                                // sx={{ fill: "#183084" }}
                                 color="error"
                               />
                             </IconButton>

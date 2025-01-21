@@ -23,6 +23,7 @@ import { getMsgsFromErrorCode } from "../../../helpers/utils";
 import { tableSortActiveLabel } from "../../../helpers/styles";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import { Link as RouterLink } from "react-router-dom";
+import { tooltipClasses } from "@mui/material/Tooltip";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   backgroundColor: theme.palette.primary.main,
@@ -40,6 +41,17 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
     border: 0,
   },
   height: "1rem",
+}));
+
+const LightTooltip = styled(({ className, ...props }) => (
+  <Tooltip {...props} classes={{ popper: className }} />
+))(({ theme }) => ({
+  [`& .${tooltipClasses.tooltip}`]: {
+    backgroundColor: theme.palette.common.white,
+    color: "black",
+    boxShadow: theme.shadows[2],
+    fontSize: 12,
+  },
 }));
 
 const columns = [
@@ -196,7 +208,7 @@ const CaseLookUpResult = ({ lookUpSummary, reqPayload }) => {
       case "claimantName":
         return (
           <Stack
-            spacing={1.5}
+            spacing={1}
             direction="row"
             alignItems="center"
             sx={{ width: "100%" }}
@@ -214,7 +226,7 @@ const CaseLookUpResult = ({ lookUpSummary, reqPayload }) => {
       case "followUp":
         return `${row?.followUpType || ""} ${row?.followUpDt || ""}`;
       case "caseId":
-        return (
+        return row?.caseId; /* (
           <Link
             component={RouterLink}
             to={`/case-summary/${row?.caseId}`}
@@ -224,11 +236,11 @@ const CaseLookUpResult = ({ lookUpSummary, reqPayload }) => {
           >
             {row?.caseId}
           </Link>
-        );
+        ); */
       case "stage":
         return (
           <Stack
-            spacing={1.5}
+            spacing={1}
             direction="row"
             alignItems="center"
             sx={{ width: "100%" }}
@@ -240,6 +252,38 @@ const CaseLookUpResult = ({ lookUpSummary, reqPayload }) => {
               </Tooltip>
             )}
           </Stack>
+        );
+      case "status":
+        return (
+          <>
+            {row?.caseActivityDetails ? (
+              <Stack
+                spacing={1}
+                direction="row"
+                alignItems="center"
+                sx={{ width: "100%" }}
+              >
+                <Typography>{row?.status}</Typography>
+                <LightTooltip
+                  title={
+                    <span
+                      dangerouslySetInnerHTML={{
+                        __html: row?.caseActivityDetails?.replace(
+                          /\n/g,
+                          "<br>"
+                        ),
+                      }}
+                    ></span>
+                  }
+                  placement="right-start"
+                >
+                  <MoreHorizIcon />
+                </LightTooltip>
+              </Stack>
+            ) : (
+              row?.status
+            )}
+          </>
         );
       default:
         return row[column.id] || "";

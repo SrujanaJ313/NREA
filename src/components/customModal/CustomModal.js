@@ -83,7 +83,7 @@ function CustomModal(props) {
         justifyContent="flex-start"
         alignItems="center"
         sx={{ backgroundColor: "#d2dfee", color: "#162e83" }}
-        style={{ padding: "0.25rem" }}
+        style={{ padding: "0.25rem", cursor: "move" }}
       >
         <Stack
           alignItems="center"

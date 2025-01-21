@@ -250,7 +250,7 @@ export default function Header() {
               label="Case Lookup"
               onClick={() => handleNavigation("case-lookup")}
             />
-            <TreeItem
+            {/* <TreeItem
               itemId="case-summary"
               label="Case Summary"
               onClick={() => handleNavigation("case-summary")}
@@ -264,7 +264,7 @@ export default function Header() {
               itemId="case-notes"
               label="Case Notes"
               onClick={() => handleNavigation("case-notes")}
-            />
+            /> */}
           </TreeItem>
           <TreeItem itemId="appointments" label="Appointments">
             <TreeItem

@@ -52,8 +52,23 @@ const caseStageURL = `${baseApiUrl}${process.env.REACT_APP_CASE_STAGE}`;
 const caseTerminationReasonURL = `${baseApiUrl}${process.env.REACT_APP_CASE_TERMINATION_REASON}`;
 const caseLookUpSummaryURL = `${baseApiUrl}${process.env.REACT_APP_CASE_LOOK_UP_SUMMARY}`;
 const caseSummaryURL = `${baseApiUrl}${process.env.REACT_APP_CASE_SUMMARY}`;
+const caseSummaryActivityURL = `${baseApiUrl}${process.env.REACT_APP_CASE_SUMMARY_ACTIVITY}`;
 const casePendingScheduleURL = `${baseApiUrl}${process.env.REACT_APP_PENDING_SCHEDULE}`;
 const kpiSummaryURL = `${baseApiUrl}${process.env.REACT_APP_CASE_KPI_SUMMARY}`;
+const scheduleLocalOfficeURL = `${baseApiUrl}${process.env.REACT_APP_CASE_SCHEDULE_LOCAL_OFFICE}`;
+const scheduleCaseManagerAvlURL = `${baseApiUrl}${process.env.REACT_APP_CASE_SCHEDULE_CASE_MANAGER_AVL_LIST}`;
+const scheduleSaveURL = `${baseApiUrl}${process.env.REACT_APP_CASE_SCHEDULE_SAVE}`;
+const employeeSearchURL = `${baseApiUrl}${process.env.REACT_APP_CASE_EMPLOYER_SEARCH}`;
+
+const unavailabilityURL = `${baseApiUrl}${process.env.REACT_APP_UNAVAILABILITY}`;
+const unavailabilityDetailURL = `${baseApiUrl}${process.env.REACT_APP_UNAVAILABILITY_DETAIL}`;
+const unavailabilityRequestURL = `${baseApiUrl}${process.env.REACT_APP_UNAVAILABILITY_REQUEST}`;
+const unavailabilityApproveURL = `${baseApiUrl}${process.env.REACT_APP_UNAVAILABILITY_APPROVE}`;
+const unavailabilityRejectURL = `${baseApiUrl}${process.env.REACT_APP_UNAVAILABILITY_REJECT}`;
+const unavailabilityWithdrawURL = `${baseApiUrl}${process.env.REACT_APP_UNAVAILABILITY_WITHDRAW}`;
+const unavailabilityReasonURL = `${baseApiUrl}${process.env.REACT_APP_CASE_UNAVAILABILITY_REASON}`;
+const staffUnavailabilityURL = `${baseApiUrl}${process.env.REACT_APP_CASE_STAFF_UNAVAILABILITY}`;
+const unavailabilityStatusURL = `${baseApiUrl}${process.env.REACT_APP_UNAVAILABILITY_STATUS}`;
 
 export {
   baseApiUrl,
@@ -103,6 +118,20 @@ export {
   caseTerminationReasonURL,
   caseLookUpSummaryURL,
   caseSummaryURL,
+  caseSummaryActivityURL,
   casePendingScheduleURL,
   kpiSummaryURL,
+  scheduleLocalOfficeURL,
+  scheduleCaseManagerAvlURL,
+  scheduleSaveURL,
+  employeeSearchURL,
+  unavailabilityURL,
+  unavailabilityDetailURL,
+  unavailabilityRequestURL,
+  unavailabilityApproveURL,
+  unavailabilityRejectURL,
+  unavailabilityWithdrawURL,
+  unavailabilityReasonURL,
+  staffUnavailabilityURL,
+  unavailabilityStatusURL,
 };
